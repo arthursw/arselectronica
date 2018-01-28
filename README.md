@@ -1,3 +1,3 @@
-# Gif Jokey
+# Ars Electronica
 
-[Gif-Jockey](https://arthursw.github.io/gif-jockey/) to party!
+[Ars Electronica](https://arthursw.github.io/arselectronica/)!
