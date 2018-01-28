@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>GJ</title>
+
+		<link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+		<link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96">
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<!-- <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" media="all"> -->
+		<!-- <link rel="stylesheet" href="node_modules/bootstrap-slider/dist/css/bootstrap-slider.min.css" type="text/css" media="all"> -->
+		<link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet">
+
+		<link rel="stylesheet" href="main.bundle.css" type="text/css" media="all">
+
+  		<link rel="stylesheet" href="lib/jquery-ui-1.12.1.custom/jquery-ui.min.css">
+
+	</head>
+	<body class="noselect">
+		<div id="main-container" class="gg-row">
+			
+			<div id="gui">
+				<div id="logo">
+					<img class="logo-img" alt="GJ-logo" src="GJ.png">
+					<h1>Gif Jokey</h1>
+				</div>
+			</div>
+
+			<div class="gg-row gg-grow">
+
+				<h1 class="typewriter">
+					<p href="" class="typewrite" data-period="1000" data-type='[[ "Hi Stephan Kobler", "Welcome", "Please make yourself comfortable", "Just lay back and relax", "Ready ?", "All right", "First, I would like to show you \"FLAN\"" ],["Click/Tap on the center of your screen", "Click/Tap again to generate another pattern", "The sound is generated depending on the pattern", "The vertical position of your click affects the number of lines", "The horizontal position affect the number of symbols", "Enjoy", "Having fun?", "All right, let me show you \"GJ\""], ["Please activate your webcam", "Click when you are ready"]]'>
+						<span class="wrap"></span>
+					</p>
+
+				</h1>
+
+				<div id="typewriter-nav" class="gg-row gg-grow">
+					<button>Previous</button><button>Next</button>
+				</div>
+
+
+				<div id="gif-thumbnails" class="gg-column gg-h100">
+					<div class="gg-row">
+
+						<ul id="outputs" class="gg-list">
+							<!-- <li class="placeholder"></li> -->
+							<div class="list-header gg-row">
+								<h4>Gifs</h4>
+								<button type="button" class="add-gif-btn">
+									<span>Add GIF</span>
+								</button>
+								<button type="button" class="add-gif-auto-btn">
+									<span>Add auto GIF</span>
+								</button>
+							<div>
+						</ul>
+
+						<div id="thumbnails-container">
+							<!-- <li class="placeholder"></li> -->
+							<div class="list-header gg-row">
+								<h4>Frames</h4>
+								<!-- <button type="button" class="snapshot-btn">
+									<span>Snapshot</span>
+								</button> -->
+								<button type="button" class="upload-image-btn">
+									<input data-name='file-selector' type='file' class='form-control gg-hidden' name='file[]' accept='image/*'/>
+									<span>Upload image</span>
+								</button>
+							</div>
+							<ul id="thumbnails" class="gg-list">
+
+							</ul>
+						</div>
+
+						<button type="button" class="open-close-btn">
+							<span class="ui-icon ui-icon-caret-1-e"></span>
+						</button>
+
+					</div>
+					
+				</div>
+
+				<div class="gg-row gg-wrap gg-grow">
+				
+					<div id="camera" class=""></div>
+					
+					<canvas id="paperCanvas" resize></canvas>
+					<canvas id="soundCanvas" resize></canvas>
+
+<!-- 					<div id="effect" class=""></div>				
+					<div id="gif-result" class=""></div> -->
+
+				</div>
+
+				<div id="result" class=""></div>
+				<div id="gif-result" class=""></div>
+			</div>
+
+			<audio id="shutter-sound">
+			  <source src="shutter.ogg" type="audio/ogg">
+			  <source src="shutter.mp3" type="audio/mpeg">
+			  Your browser does not support the audio tag.
+			</audio>
+		</div>
+
+		<!-- <script src="node_modules/jquery/dist/jquery.min.js"></script> -->
+		<!-- <script src="node_modules/glfx/glfx.js"></script> -->
+		<!-- <script src="node_modules/gifshot/build/gifshot.js"></script> -->
+		<!-- <script src="node_modules/three/build/three.js"></script> -->
+
+<!-- 		<script src='node_modules/three/examples/js/postprocessing/EffectComposer.js'></script>
+		<script src='node_modules/three/examples/js/postprocessing/RenderPass.js'></script>
+		<script src='node_modules/three/examples/js/postprocessing/ShaderPass.js'></script>
+		<script src='node_modules/three/examples/js/postprocessing/MaskPass.js'></script> 
+		<script src='node_modules/three/examples/js/shaders/CopyShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/BleachBypassShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/BrightnessContrastShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/ColorifyShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/DotScreenShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/EdgeShader2.js'></script> 
+		<script src='node_modules/three/examples/js/shaders/KaleidoShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/MirrorShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/SepiaShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/VignetteShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/FilmShader.js'></script>
+		<script src='node_modules/three/examples/js/shaders/RGBShiftShader.js'></script> -->
+
+<!-- <script src='node_modules/three/examples/js/shaders/VerticalTiltShiftShader.js'></script> -->
+
+		<!-- <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script> -->
+		<!-- <script src="node_modules/bootstrap-slider/dist/bootstrap-slider.min.js"></script> -->
+		
+		<!-- <script src="https://cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script> -->
+
+		<script src="lib/dat.gui.min.js"></script>
+		<!-- <script src="lib/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script> -->
+		<!-- <script src="lib/webcam.min.js"></script> -->
+		<script src="lib/beatdetector.js"></script>
+		<script src="lib/hammer.min.js"></script>
+		<script src="https://code.jquery.com/jquery-2.1.4.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.11.5/paper-full.min.js"></script>
+
+		<script src="flan.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>
