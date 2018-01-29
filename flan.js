@@ -530,8 +530,12 @@ $(document).ready( function() {
 		rectangle.nWidth = ( Math.abs(ev.center.x - window.innerWidth / 2) / window.innerWidth ) * 100;
 		rectangle.nHeight = ( Math.abs(ev.center.y - window.innerHeight / 2) / window.innerHeight ) * 100;
 		if(window.typewriter) {
-			if(window.typewriter.waitingClick) {
-				window.typewriter.pressedClick = true
+			if(window.typewriter.paused == 'click') {
+				window.typewriter.paused = null
+				window.typewriter.next()
+				if(typewriter.typewriterList.name == 'gj') {
+					window.gifJokey.deselectAndTakeSnapshot()
+				}
 			}
 		}
 

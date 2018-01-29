@@ -21,39 +21,49 @@ let cKey = 67
 
 let gifJokey: GifJokey = null
 
+type TypewriterItem = string | {text: string, pause: string}
+type TypewriterList = { name: string, list: TypewriterItem[], app?: ()=> void }
+
+
 class Typewriter {
 	
-	toRotate: string[]
-	toRotates: string[][]
+	typewriterList: TypewriterList
+	typewriterLists: TypewriterList[]
+	sequence: string[]
 	el: Element
 	loopNum = 0
-	rotateNum = 0
+	rotateNum: number = 0
 	period: number
 	text: string
 	isDeleting: boolean
-	XPs: any[]
-	waitingClick = false
-	pressedClick = false
+
+	paused:string = null
 
 	numFlan = 0
 
-	constructor(el: Element, toRotates: string[][], period: string) {
-		this.toRotates = toRotates;
-		this.toRotate = toRotates[this.rotateNum];
+	constructor(el: Element, typewriterLists: TypewriterList[], sequence: string[], period: number) {
+		this.typewriterLists = typewriterLists
+		this.sequence = sequence
+		this.typewriterList = typewriterLists.find( (item: TypewriterList) => item.name == sequence[this.rotateNum])
 		this.el = el;
-		this.period = parseInt(period, 10) || 2000;
+		this.period = period || 1000;
 		this.text = '';
 		this.tick();
 		this.isDeleting = false;
-		this.XPs = [this.flan, this.gj]
 	}
 
 	tick() {
 
-		var i = this.loopNum % this.toRotate.length;
-		var fullTxt = this.toRotate[i];
-		
-		this.waitingClick = fullTxt.indexOf('Click') == 0;
+		var i = this.loopNum % this.typewriterList.list.length;
+		let typewriterItem = this.typewriterList.list[i];
+		let fullTxt = ''
+
+		if(typeof typewriterItem === "string") {
+			fullTxt = typewriterItem
+		} else if (typeof typewriterItem === "object") {
+			fullTxt = typewriterItem.text
+			this.paused = typewriterItem.pause
+		}
 
 		if (this.isDeleting) {
 			this.text = fullTxt.substring(0, this.text.length - 1);
@@ -69,8 +79,7 @@ class Typewriter {
 		if (this.isDeleting) { delta /= 3; }
 
 		if (!this.isDeleting && this.text === fullTxt) {
-			if(!this.waitingClick || this.pressedClick) {
-				this.pressedClick = false;
+			if(this.paused == null) {
 				delta = this.period;
 				this.isDeleting = true;
 			}
@@ -83,37 +92,82 @@ class Typewriter {
 		}, delta);
 	}
 
-	flan() {
+	static flan() {
 		$('.typewriter').addClass('top');
 		$("#paperCanvas").show();
 		// $("#soundCanvas").show();
 		(<any>window).flanOn = true
 	}
 
-	gj() {
+	static gj() {
 		$('.typewriter').removeClass('top');
 		$("#paperCanvas").hide();
+		$("#result").show();
 
 		let webcamWidth = location.hash.length > 0 ? parseInt(location.hash.substring(1)) : null
 		if(webcamWidth != null && Number.isFinite(webcamWidth)) {
 			Webcam.WIDTH = webcamWidth
 		}
-		gifJokey.webcam = new Webcam(()=>gifJokey.webcamLoaded(), webcamWidth)
+
+		let cameraInitialized = ()=> {
+			$('body').append('<iframe id="music" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/91049633&amp;color=%23ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true"></iframe>')
+			gifJokey.webcamLoaded()
+			return
+		}
+
+		gifJokey.webcam = new Webcam(cameraInitialized, webcamWidth)
 		gifJokey.initializeClipboard()
+	}
+
+	static tweet() {
+
 	}
 
 	next() {
 		this.text = ''
 		this.isDeleting = false
 		this.loopNum++
-		if(this.loopNum == this.toRotate.length) {
+		if(this.loopNum == this.typewriterList.list.length) {
 			this.loopNum = 0
-			this.XPs[this.rotateNum]()
-			this.rotateNum++;
-			this.toRotate = this.toRotates[this.rotateNum];
+			this.nextRotate()
 		}
 	}
+
+	nextRotate() {
+		this.rotateNum++;
+		if(this.rotateNum < this.sequence.length) {
+			this.typewriterList = this.typewriterLists.find( (item: TypewriterList) => item.name == this.sequence[this.rotateNum])
+			this.typewriterList.app()
+		}
+	}
+
+	goTo(name: string) {
+		let rotateNum = this.typewriterLists.findIndex( (item: TypewriterList) => item.name == this.sequence[this.rotateNum])
+		if(rotateNum < 0) {
+			return
+		}
+		this.rotateNum = rotateNum
+		this.typewriterList = this.typewriterLists[rotateNum]
+		this.typewriterList.app()
+	}
 }
+
+function is_touch_device() {
+  return 'ontouchstart' in window        // works on most browsers 
+      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+};
+
+let actionName = is_touch_device() ? 'Tap' : 'Click';
+
+let typewriterData: TypewriterList[] = [
+	{ name: 'intro', list: [ "Hi Stephan Kobler", "Welcome", "Please make yourself comfortable", "Just lay back and relax", "Ready ?", "All right", "First, I would like to show you \"FLAN\"" ]},
+	{ name: 'flan', list: [{ text: actionName + " on the center of your screen", "pause": 'click'}, {text: actionName + " again to generate another pattern", pause: "click" }, "The sound is generated depending on the pattern", "The vertical position of your click affects the number of lines", "The horizontal position affect the number of symbols", "Enjoy", "Having fun?", "All right, let's play with \"GJ\""], app: Typewriter.flan}, 
+	{ name: 'gj', list: [{ text: "Please activate your webcam", pause: 'webcam' }, {text: actionName + " when you are ready", pause: 'click' }, {text: actionName + " again", pause: 'click' }, "Like it?", {text: "All right, let's try another one", pause: 'click'}, {text: "One more photo", pause: 'click'}, "Having fun?"], app: Typewriter.gj },
+	{ name: 'tweet', list: ["...Ooops I tweeted a photo of you...", "...saying you will hire me...", "thanks for your trust, it was nice to abuse it :-)"], app: Typewriter.tweet},
+	{ name: 'no-webcam', list: ["Are you sure you don\'t want to activate your webcam?", "Then You won't be able to hire me...", { text: "Let's try again", pause: "webcam"} ]}
+]
+let typewriterSequence: string[] = ['intro', 'flan', 'gj', 'tweet']
+let typewriterPeriod = 500
 
 class GifJokey {
 	
@@ -216,12 +270,8 @@ class GifJokey {
 		$("#result").hide()
 		var elements = document.getElementsByClassName('typewrite');
 		for (var i=0; i<elements.length; i++) {
-			var toRotate = elements[i].getAttribute('data-type');
-			var period = elements[i].getAttribute('data-period');
-			if (toRotate) {
-				this.typewriter = new Typewriter(elements[i], JSON.parse(toRotate), period);
-				(<any>window).typewriter = this.typewriter
-			}
+			this.typewriter = new Typewriter(elements[i], typewriterData, typewriterSequence, typewriterPeriod);
+			(<any>window).typewriter = this.typewriter
 		}
 		// INJECT CSS
 		var css = document.createElement("style");
@@ -252,7 +302,7 @@ class GifJokey {
 			// if(this.typewriter.waitingSpace) {
 			// 	this.typewriter.pressedSpace = true
 			// }
-			this.deselectAndTakeSnapshot()
+			// this.deselectAndTakeSnapshot()
 			event.preventDefault()
 		} else if(event.keyCode == 13) {	// enter
 			// Ignore if one of the dat.gui item is focused
@@ -282,7 +332,34 @@ class GifJokey {
 				this.updateFilteredImage()
 			}
 		})
-		this.shaderManager.randomizeParams()
+		// this.shaderManager.randomizeParams()
+		type ShaderType = {name: string, parameters: any}
+		let shaders: ShaderType[] = [{ name: 'Bad TV', parameters: {'Thick distrotion': 1, 'Fine distrotion': 3.8, 'Distrotion': 0.4, 'Roll speed': 0.07} }, 
+			{ name: 'RGB Shift', parameters: {'Amount': 0.08, 'Angle': 294} }, 
+			{ name: 'Hue & Saturation', parameters: {'Hue': 0.62, 'Saturation': -0.04} }, 
+			{ name: 'Mirror', parameters: {'Side': 2} }]
+
+		for(let shader of this.shaderManager.shaders) {
+			let shaderParameters = shaders.find((s)=> s.name == shader.object.name)
+			shader.object.on = shaderParameters != null
+			if(shader.object.on) {
+				shader.folder.open()
+			} else {
+				shader.folder.close()
+				continue
+			}
+			for(let propertyName in shader.object.parameters) {
+				let propertiesObject = shader.object.parameters[propertyName]
+				propertiesObject.value = shaderParameters.parameters[propertiesObject.name]
+			}
+			for(let controller of shader.folder.getControllers()) {
+				controller.updateDisplay()
+			}
+		}
+
+		this.shaderManager.onToggleShaders(false)
+		this.shaderManager.onParamsChange()
+		this.bpm.setBPMinterval(110, null, false)
 		this.gifManager.addGif()
 	}
 

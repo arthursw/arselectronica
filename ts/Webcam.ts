@@ -9,6 +9,7 @@ export class Webcam {
 	photo: HTMLElement = null
 
 	constructor(callback: ()=>void, width: number = null) {
+
 		if(width) {
 			this.width = Math.max(100, Math.min(width, 2048))
 		} else {
@@ -57,6 +58,13 @@ export class Webcam {
 			// 	stream.removeTrack(stream.getVideoTracks()[0])
 			// 	this.video.src = ''
 			// }
+			let typewriter: any = (<any>window).typewriter;
+			
+			if(typewriter.typewriterList.list[typewriter.loopNum].pause == 'webcam') {
+				typewriter.paused = null;
+				typewriter.next()
+			}
+
 			if (n.mozGetUserMedia) {
 				let v: any = this.video
 				v.mozSrcObject = stream
@@ -73,6 +81,13 @@ export class Webcam {
 		},
 		function(err: string) {
 			console.log("An error occured! " + err)
+
+			let typewriter: any = (<any>window).typewriter;
+
+			if(typewriter.typewriterList.list[typewriter.loopNum].pause == 'webcam') {
+				typewriter.paused = null;
+				typewriter.goTo('no-webcam');
+			}
 		}
 		);
 
