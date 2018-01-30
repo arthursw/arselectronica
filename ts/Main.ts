@@ -189,7 +189,7 @@ class Typewriter {
 	}
 
 	goTo(name: string) {
-		let rotateNum = this.typewriterLists.findIndex( (item: TypewriterList) => item.name == this.sequence[this.rotateNum])
+		let rotateNum = this.typewriterLists.findIndex( (item: TypewriterList) => item.name == name)
 		if(rotateNum < 0) {
 			return
 		}

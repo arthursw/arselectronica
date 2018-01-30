@@ -55307,7 +55307,7 @@ class Typewriter {
         }
     }
     goTo(name) {
-        let rotateNum = this.typewriterLists.findIndex((item) => item.name == this.sequence[this.rotateNum]);
+        let rotateNum = this.typewriterLists.findIndex((item) => item.name == name);
         if (rotateNum < 0) {
             return;
         }
