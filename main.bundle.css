@@ -10,7 +10,7 @@ body {
   margin: 0;
   overflow-y: auto;
   overflow-x: auto;
-  background-color: black;
+  background-color: #ce3635;
   opacity: 1; }
   body.flash {
     -webkit-animation: flashOpacity 0.25s 1;
@@ -102,11 +102,68 @@ ul.gg-list {
       width: 400px;
       height: 300px; }
 
+#music {
+  display: none; }
+
 #gui {
   width: 250px;
   min-width: 250px;
   height: 100%;
-  overflow: auto; }
+  overflow: auto;
+  display: none; }
+
+#gif-thumbnails {
+  display: none; }
+
+#soundCanvas {
+  position: absolute;
+  height: 33.33%;
+  top: 66.66%;
+  left: 0;
+  right: 0;
+  -webkit-transition: top 0.7s;
+  /* Safari */
+  transition: top 0.7s; }
+
+#soundCanvas.hidden {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  right: 0; }
+
+.typewriter {
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+  padding-top: 10em;
+  font-family: "Arial", sans-serif;
+  width: 100%;
+  position: fixed;
+  background-color: transparent; }
+  .typewriter.top {
+    padding-top: 0; }
+
+#typewriter-nav {
+  width: 100%;
+  color: white;
+  justify-content: space-around;
+  position: fixed;
+  font-family: Arial, sans-serif;
+  bottom: 0;
+  display: none; }
+
+#typewriter-nav > button {
+  cursor: pointer;
+  color: white;
+  font-size: 1em;
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 0.18);
+  width: 50%;
+  text-align: center;
+  /* border-color: white; */
+  border: 1px solid #ce3635; }
+  #typewriter-nav > button:active, #typewriter-nav > button:focus {
+    outline: none; }
 
 #outputs {
   width: 200px; }

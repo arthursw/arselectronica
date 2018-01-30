@@ -151,7 +151,7 @@ export class Gif {
 		this.nImages = 0
 	}
 
-	preview(save = false) {
+	preview(save = false, callback: (image: string)=>void = null) {
 		let imagesJ = this.getFilteredImagesJ().toArray()
 		if(imagesJ.length == 0) {
 			return
@@ -175,6 +175,9 @@ export class Gif {
 					this.hasPreview = true
 					if(save) {
 						aJ[0].click()
+					}
+					if(callback != null) {
+						callback(image)
 					}
 				}
 			}
@@ -249,7 +252,7 @@ export class GifManager {
 		return this.currentGif.containerJ.parentUntil('li.gg-thumbnail')
 	}
 
-	addGif() {
+	addGif(setCurrent=false) {
 		this.gifJockey.deselectImages()
 		this.gifJockey.emptyThumbnails()
 		this.gif.empty()
@@ -322,6 +325,9 @@ export class GifManager {
 				
 		// 	}
 		// } }))
+		if(setCurrent) {
+			this.selectGif(currentGifID)
+		}
 	}
 
 	createAutoGif() {

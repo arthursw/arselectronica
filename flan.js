@@ -530,13 +530,14 @@ $(document).ready( function() {
 		rectangle.nWidth = ( Math.abs(ev.center.x - window.innerWidth / 2) / window.innerWidth ) * 100;
 		rectangle.nHeight = ( Math.abs(ev.center.y - window.innerHeight / 2) / window.innerHeight ) * 100;
 		if(window.typewriter) {
+			if(typewriter.typewriterList.name == 'gj' || typewriter.typewriterList.name == 'end') {
+				window.typewriter.takeSnapshot()
+			}
 			if(window.typewriter.paused == 'click') {
 				window.typewriter.paused = null
 				window.typewriter.next()
-				if(typewriter.typewriterList.name == 'gj') {
-					window.gifJokey.deselectAndTakeSnapshot()
-				}
 			}
+
 		}
 
 	});

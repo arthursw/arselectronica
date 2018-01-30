@@ -25,6 +25,11 @@ type TypewriterItem = string | {text: string, pause: string}
 type TypewriterList = { name: string, list: TypewriterItem[], app?: ()=> void }
 
 
+function is_touch_device() {
+  return 'ontouchstart' in window        // works on most browsers 
+      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
+};
+
 class Typewriter {
 	
 	typewriterList: TypewriterList
@@ -36,6 +41,7 @@ class Typewriter {
 	period: number
 	text: string
 	isDeleting: boolean
+	nSnapshots = 0
 
 	paused:string = null
 
@@ -102,7 +108,7 @@ class Typewriter {
 	static gj() {
 		$('.typewriter').removeClass('top');
 		$("#paperCanvas").hide();
-		$("#result").show();
+		
 
 		let webcamWidth = location.hash.length > 0 ? parseInt(location.hash.substring(1)) : null
 		if(webcamWidth != null && Number.isFinite(webcamWidth)) {
@@ -111,6 +117,7 @@ class Typewriter {
 
 		let cameraInitialized = ()=> {
 			$('body').append('<iframe id="music" width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/91049633&amp;color=%23ff5500&amp;auto_play=true&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;show_teaser=true&amp;visual=true"></iframe>')
+			$("#result").show();
 			gifJokey.webcamLoaded()
 			return
 		}
@@ -120,7 +127,47 @@ class Typewriter {
 	}
 
 	static tweet() {
+		gifJokey.gifManager.currentGif.preview(false, (image)=> {
+			$.post('/ajax/tweet/', { image: image }, (data: any, textStatus: string, jqXHR: JQueryXHR) => {
 
+				let askTweetText = ()=> {
+					$.get('/ajax/tweetText/', (data: any, textStatus: string, jqXHR: JQueryXHR) => {
+						if(data != null && data != '') {
+							let jsonData = JSON.parse(data)
+
+							if(jsonData.tweet != '') {
+								let actionName = is_touch_device() ? 'Tap' : 'Click';
+								gifJokey.typewriter.typewriterList.list.splice(gifJokey.typewriter.loopNum+2, 0, {text: '"'+jsonData.content+'"', pause: 'click'})
+								$('h1.typewriter').append($('<a>').attr('id', 'main-link').attr('href', jsonData.url).attr('target','_blank').text(jsonData.url))
+								gifJokey.typewriter.paused = null
+								gifJokey.typewriter.next()
+							} else {
+								setTimeout(askTweetText, 1000);
+							}
+						} else {
+							setTimeout(askTweetText, 1000);
+						}
+					})
+				}
+				askTweetText()
+			})
+			.done(function() {
+				console.log( "second success" );
+			})
+			.fail(function() {
+				console.log( "error" );
+			})
+			.always(function() {
+				console.log( "finished" );
+			});
+		})
+	}
+
+	static arthur() {
+		setTimeout( ()=> {
+			$('#main-link').attr('href', 'http://arthurmasson.xyz/').text('arthurmasson.xyz')
+			$('h1.typewriter').append($('<br><br><a>').attr('href', 'credits').attr('target','_blank').text('credits'))
+		}, 2000)
 	}
 
 	next() {
@@ -150,24 +197,35 @@ class Typewriter {
 		this.typewriterList = this.typewriterLists[rotateNum]
 		this.typewriterList.app()
 	}
+
+	takeSnapshot() {
+		this.nSnapshots++;
+		if(this.paused == 'snapshot') {
+			// gifJokey.gifManager.addGif(true)
+			gifJokey.gifManager.gif.empty()
+			this.paused = null
+			this.next()
+		}
+		if(gifJokey.gifManager.gif.nImages>2) {
+			gifJokey.gifManager.gif.empty()
+		}
+		gifJokey.deselectAndTakeSnapshot()
+	}
 }
 
-function is_touch_device() {
-  return 'ontouchstart' in window        // works on most browsers 
-      || navigator.maxTouchPoints;       // works on IE10/11 and Surface
-};
 
 let actionName = is_touch_device() ? 'Tap' : 'Click';
 
 let typewriterData: TypewriterList[] = [
 	{ name: 'intro', list: [ "Hi Stephan Kobler", "Welcome", "Please make yourself comfortable", "Just lay back and relax", "Ready ?", "All right", "First, I would like to show you \"FLAN\"" ]},
 	{ name: 'flan', list: [{ text: actionName + " on the center of your screen", "pause": 'click'}, {text: actionName + " again to generate another pattern", pause: "click" }, "The sound is generated depending on the pattern", "The vertical position of your click affects the number of lines", "The horizontal position affect the number of symbols", "Enjoy", "Having fun?", "All right, let's play with \"GJ\""], app: Typewriter.flan}, 
-	{ name: 'gj', list: [{ text: "Please activate your webcam", pause: 'webcam' }, {text: actionName + " when you are ready", pause: 'click' }, {text: actionName + " again", pause: 'click' }, "Like it?", {text: "All right, let's try another one", pause: 'click'}, {text: "One more photo", pause: 'click'}, "Having fun?"], app: Typewriter.gj },
-	{ name: 'tweet', list: ["...Ooops I tweeted a photo of you...", "...saying you will hire me...", "thanks for your trust, it was nice to abuse it :-)"], app: Typewriter.tweet},
+	{ name: 'gj', list: [{ text: "Please activate your webcam", pause: 'webcam' }, {text: actionName + " when you are ready", pause: 'click' }, {text: actionName + " again", pause: 'click' }, "Like it?", {text: "All right, let's try another one", pause: 'snapshot'}, {text: "One more photo", pause: 'click'}], app: Typewriter.gj },
+	{ name: 'tweet', list: [{text: "Having fun?", pause: "all"}, "Ooops I tweeted a GIF of you...", "...thank your for your attention ;-)"], app: Typewriter.tweet},
+	{ name: 'end', list: [{text:"To know more about me, visit arthurmasson.xyz", pause: "all"}], app: Typewriter.arthur},
 	{ name: 'no-webcam', list: ["Are you sure you don\'t want to activate your webcam?", "Then You won't be able to hire me...", { text: "Let's try again", pause: "webcam"} ]}
 ]
-let typewriterSequence: string[] = ['intro', 'flan', 'gj', 'tweet']
-let typewriterPeriod = 500
+let typewriterSequence: string[] = ['intro', 'flan', 'gj', 'tweet', 'end']
+let typewriterPeriod = 250
 
 class GifJokey {
 	
