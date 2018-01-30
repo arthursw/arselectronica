@@ -132,16 +132,30 @@ ul.gg-list {
   right: 0; }
 
 .typewriter {
+  z-index: 999;
   text-align: center;
   color: #fff;
   text-decoration: none;
-  padding-top: 10em;
+  padding-top: 5em;
   font-family: "Arial", sans-serif;
   width: 100%;
   position: fixed;
   background-color: transparent; }
   .typewriter.top {
     padding-top: 0; }
+
+p.typewrite span {
+  background-color: transparent; }
+
+p.typewrite.flan span {
+  background-color: #ce3635; }
+
+@media (min-width: 500px) {
+  .typewriter {
+    padding-top: 10em; }
+  #camera canvas {
+    margin: auto;
+    position: relative; } }
 
 #typewriter-nav {
   width: 100%;
@@ -221,12 +235,13 @@ ul.gg-list {
   flex-grow: 1;
   max-width: 100%; }
   #camera canvas {
+    position: absolute;
+    top: 0;
     max-width: 100%;
     max-height: 100%;
     width: 100%;
     object-fit: contain;
-    display: block;
-    margin: auto; }
+    display: block; }
 
 #gif-result {
   display: none; }

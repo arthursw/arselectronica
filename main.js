@@ -55232,11 +55232,14 @@ class Typewriter {
     static flan() {
         $('.typewriter').addClass('top');
         $("#paperCanvas").show();
+        $('p.typewrite').addClass('flan');
         // $("#soundCanvas").show();
         window.flanOn = true;
     }
     static gj() {
         $('.typewriter').removeClass('top');
+        $('body').css('background-color', 'black');
+        $('p.typewrite').removeClass('flan');
         $("#paperCanvas").hide();
         let webcamWidth = location.hash.length > 0 ? parseInt(location.hash.substring(1)) : null;
         if (webcamWidth != null && Number.isFinite(webcamWidth)) {
