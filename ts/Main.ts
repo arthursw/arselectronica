@@ -69,6 +69,9 @@ class Typewriter {
 		} else if (typeof typewriterItem === "object") {
 			fullTxt = typewriterItem.text
 			this.paused = typewriterItem.pause
+			if(this.paused == 'webcam' && this.typewriterList.name == 'no-webcam') {
+				gifJokey.webcam.initialize()
+			}
 		}
 
 		if (this.isDeleting) {
@@ -170,6 +173,10 @@ class Typewriter {
 		}, 2000)
 	}
 
+	static noWebcam() {
+
+	}
+
 	next() {
 		this.text = ''
 		this.isDeleting = false
@@ -218,11 +225,11 @@ let actionName = is_touch_device() ? 'Tap' : 'Click';
 
 let typewriterData: TypewriterList[] = [
 	{ name: 'intro', list: [ "Hi Stephan Kobler", "Welcome", "Please make yourself comfortable", "Just lay back and relax", "Ready ?", "All right", "First, I would like to show you \"FLAN\"" ]},
-	{ name: 'flan', list: [{ text: actionName + " on the center of your screen", "pause": 'click'}, {text: actionName + " again to generate another pattern", pause: "click" }, "The sound is generated depending on the pattern", "The vertical position of your click affects the number of lines", "The horizontal position affect the number of symbols", "Enjoy", "Having fun?", "All right, let's play with \"GJ\""], app: Typewriter.flan}, 
+	{ name: 'flan', list: [{ text: actionName + " on the center of your screen", "pause": 'click'}, {text: actionName + " again to generate another pattern", pause: "click" }, "Try generating more patterns by " + actionName.toLowerCase() + "ing at different places on your screen",  "The sound is generated depending on the pattern", "The vertical position of your click affects the number of lines", "The horizontal position affect the number of symbols", "Enjoy", "Having fun?", "All right, let's play with \"GJ\""], app: Typewriter.flan}, 
 	{ name: 'gj', list: [{ text: "Please activate your webcam", pause: 'webcam' }, {text: actionName + " when you are ready", pause: 'click' }, {text: actionName + " again", pause: 'click' }, "Like it?", {text: "All right, let's try another one", pause: 'snapshot'}, {text: "One more photo", pause: 'click'}], app: Typewriter.gj },
-	{ name: 'tweet', list: [{text: "Having fun?", pause: "all"}, "Ooops I tweeted a GIF of you...", "...thank your for your attention ;-)"], app: Typewriter.tweet},
+	{ name: 'tweet', list: [{text: "Having fun?", pause: "all"}, "Ooops I tweeted a GIF of you...", "...thanks for your attention ;-)"], app: Typewriter.tweet},
 	{ name: 'end', list: [{text:"To know more about me, visit arthurmasson.xyz", pause: "all"}], app: Typewriter.arthur},
-	{ name: 'no-webcam', list: ["Are you sure you don\'t want to activate your webcam?", "Then You won't be able to hire me...", { text: "Let's try again", pause: "webcam"} ]}
+	{ name: 'no-webcam', list: ["Are you sure you don\'t want to activate your webcam?", "Then You won't be able to hire me...", { text: "Relaod the page and let's try again...", pause: "webcam"} ], app: Typewriter.noWebcam}
 ]
 let typewriterSequence: string[] = ['intro', 'flan', 'gj', 'tweet', 'end']
 let typewriterPeriod = 250
