@@ -482,7 +482,9 @@ $(document).ready( function() {
 				let frequency = lowFrequency + h * (highFrequency - lowFrequency)
 
 				// frequency, type, modualtionFrequency, modulationType, volume
-				waouw(output, bufferSize, frequency, soundInfo.type, nLocalWidth, soundInfo.modulationType, soundInfo.modulationAmplitude, shapeHeight / rectangle.height, duration);
+				if(soundInfo != null) {
+					waouw(output, bufferSize, frequency, soundInfo.type, nLocalWidth, soundInfo.modulationType, soundInfo.modulationAmplitude, shapeHeight / rectangle.height, duration);
+				}
 			}
 		}
 		group.position.set(project.view.bounds.center.x, project.view.bounds.center.y)
